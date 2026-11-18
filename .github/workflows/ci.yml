@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        session: [types, formatting, imports]
+        session: [tests, types, formatting, imports]
     runs-on: ubuntu-latest
 
     steps:

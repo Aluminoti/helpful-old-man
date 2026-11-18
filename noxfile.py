@@ -34,6 +34,12 @@ def parse_dependencies(*suffixes: str) -> Dict[str, str]:
 DEPS = parse_dependencies("", ".dev")
 
 
+@nox.session(reuse_venv=True)
+def tests(session: nox.Session) -> None:
+    session.install("-r", "requirements.txt")
+    session.run("python", "-m", "unittest", "discover", "-v")
+
+
 def install(*packages: str) -> InjectorT:
     if os.name == "nt" and "uvloop" in packages:
         packages = tuple(filter(lambda p: p != "uvloop", packages))

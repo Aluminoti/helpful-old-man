@@ -109,3 +109,72 @@ Every time you save a python file in the `hom` directory, the bot will restart.
 
 Helpful Old Man is licensed under the [MIT License]
 (https://github.com/wise-old-man/helpful-old-man/blob/main/LICENSE).
+
+## Moderation commands
+
+All 14 WOM Discord Bot moderation commands are available in HOM. They require
+`HOM_MOD_ROLE`, run only in a server, and respond privately to the moderator.
+Arguments in brackets are optional; names match the source bot.
+
+| Command | Arguments |
+| --- | --- |
+| `/namechange` | `name_change_id` |
+| `/verify-group` | `id`, `user` |
+| `/reset-group-code` | `id`, `user` |
+| `/reset-competition-code` | `id`, `user` |
+| `/remove-from-group` | `id`, `username`, `[requester]` |
+| `/remove-from-competition` | `id`, `username`, `[requester]` |
+| `/delete-group` | `id`, `[requester]` |
+| `/delete-competition` | `id`, `[requester]` |
+| `/delete-player` | `username`, `[requester]` |
+| `/clear-name-change-history` | `username`, `[requester]` |
+| `/add-player-annotation` | `player`, `annotation`, `[requester]` |
+| `/remove-player-annotation` | `player`, `annotation`, `[requester]` |
+| `/rollback-player-snapshot-values` | `username`, `metric` |
+| `/create-api-key` | `project`, `requester` |
+
+Name-change reviews show the hiscores checks, time/experience/efficiency differences,
+levels, and review reason. Approve/Deny buttons expire after five minutes, belong to
+the moderator who opened the review, and recheck their role on each click. Run the
+command again after expiration or a bot restart. As in the source bot, name-change
+outcomes appear on the review; the other commands write moderator logs, including
+requester attribution when supplied, to `HOM_MOD_LOG_CHANNEL`.
+
+Verification codes and API keys are delivered only by DM. The bot sends a
+placeholder DM before calling WOM, so closed DMs prevent a reset or key creation.
+If delivery fails after WOM succeeds, the moderator receives a warning and the
+completed action is still logged without the secret. Network timeouts are never
+retried automatically: check WOM's state before repeating an action.
+
+Group verification grants `HOM_GROUP_LEADER_ROLE`. To also grant an API Consumer
+role when creating keys, set the optional `HOM_API_CONSUMER_ROLE` to its Discord
+role ID. Blank or `0` disables that assignment. The bot needs permission to assign
+these roles, send DMs, and write to the moderator log channel. A role/logging
+failure is reported separately from a successful WOM action.
+
+Annotation choices and metric names are pinned to `@wise-old-man/utils` 4.0.22,
+matching the reference bot at `148c2bb`. Metric autocomplete and the reference's
+abbreviations (for example `cox-cm`, `hp`, and `rc`) are supported. Update
+`hom/moderation_data.py` when adopting newer WOM metrics or annotations.
+
+The existing ticket buttons and `/competition remove_from_competitions` bulk
+command remain available. These new slash commands load with the existing cogs;
+registration still uses the existing manual `!sync` workflow.
+
+### Offline validation
+
+After installing development dependencies, run:
+
+```sh
+python -m unittest discover -v
+nox -s tests types formatting imports
+```
+
+Tests use fake credentials and mocked WOM/Discord operations, including command
+registration, role restrictions, approval/denial and expiration, credential DM
+failures, API errors, attribution, and the existing bulk-removal behavior. They
+never connect to Discord, sync commands, or make real moderation requests.
+
+Command behavior and metric aliases were ported from
+[WOM Discord Bot](https://github.com/wise-old-man/wiseoldman-discord-bot) at
+`148c2bb`; see [third-party notices](THIRD_PARTY_NOTICES.md).

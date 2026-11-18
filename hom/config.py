@@ -57,6 +57,7 @@ class Config:
     HOM_FLAG_CHANNEL: t.Final[int] = _int("HOM_FLAG_CHANNEL")
     HOM_MOD_ROLE: t.Final[int] = _int("HOM_MOD_ROLE")
     HOM_GROUP_LEADER_ROLE: t.Final[int] = _int("HOM_GROUP_LEADER_ROLE")
+    HOM_API_CONSUMER_ROLE: t.Final[int] = int(environ.get("HOM_API_CONSUMER_ROLE") or "0")
     SHARED_ADMIN_PASSWORD: t.Final[str] = environ["SHARED_ADMIN_PASSWORD"]
     HOM_BASE_API_URL: t.Final[str] = _container_host_url("HOM_BASE_API_URL")
     HOM_BASE_WEBSITE_URL: t.Final[str] = environ["HOM_BASE_WEBSITE_URL"]
